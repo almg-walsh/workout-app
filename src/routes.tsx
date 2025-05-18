@@ -8,7 +8,7 @@ function Home() {
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/workouts" element={<ExampleComponent />} />
+    <Route path="/workout-app/workouts" element={<ExampleComponent />} />
   </Routes>
 );
 

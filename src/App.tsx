@@ -36,7 +36,7 @@ function App() {
           borderColor: 'divider',
         }}
       >
-        <Button component={Link} to="/workouts" variant="text" color="primary" sx={{ mr: 2 }}>
+        <Button component={Link} to="/workout-app/workouts" variant="text" color="primary" sx={{ mr: 2 }}>
           Home
         </Button>
       </Box>
