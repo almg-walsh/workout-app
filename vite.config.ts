@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react';
 const fs = require('fs');
 
 export default defineConfig({
+  base: '/workout-app/',
   plugins: [react()],
   server: {
     https: {
