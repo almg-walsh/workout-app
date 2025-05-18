@@ -36,11 +36,8 @@ function App() {
           borderColor: 'divider',
         }}
       >
-        <Button component={Link} to="/" variant="text" color="primary" sx={{ mr: 2 }}>
+        <Button component={Link} to="/workouts" variant="text" color="primary" sx={{ mr: 2 }}>
           Home
-        </Button>
-        <Button component={Link} to="/example" variant="text">
-          Example
         </Button>
       </Box>
       {/* Main content area */}

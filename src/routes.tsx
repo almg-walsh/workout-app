@@ -8,8 +8,7 @@ function Home() {
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/" element={<Home />} />
-    <Route path="/example" element={<ExampleComponent />} />
+    <Route path="/workouts" element={<ExampleComponent />} />
   </Routes>
 );
 
