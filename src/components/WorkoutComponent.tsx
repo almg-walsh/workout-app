@@ -22,6 +22,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import styled from 'styled-components';
 import DeleteIcon from '@mui/icons-material/Delete';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 
 // --- Types ---
 type SetEntry = { reps: string; weight: string };
@@ -29,50 +33,126 @@ type ExerciseLog = { name: string; sets: SetEntry[] };
 type WorkoutLog = { [day: string]: ExerciseLog[] };
 
 // --- Data ---
-const workoutData: { [day: string]: { name: string; url: string }[] } = {
+// Add defaultSets to each exercise
+const workoutData: { [day: string]: { name: string; url: string; defaultSets: number }[] } = {
   day1: [
     {
       name: 'Smith machine incline bench press',
       url: 'https://www.youtube.com/watch?v=X4YsGnP4a-A',
+      defaultSets: 4,
     },
-    { name: 'Quad Focused Leg Press 2 Press', url: 'https://www.youtube.com/watch?v=O6Fr-819xbU' },
-    { name: 'Overhand Lat Pulldown', url: '  https://www.youtube.com/watch?v=zJWmGede-Zk' },
-    { name: 'Seated Hamstring Curl', url: '  https://www.youtube.com/watch?v=H6R1SNKhsiU' },
-    { name: 'Face away cable curls', url: '  https://www.youtube.com/watch?v=MhJfVKlYjWE' },
-    { name: 'RP Cable Upright Row', url: '  https://www.youtube.com/watch?v=EyJ7bIYCq8g' },
-    { name: 'Machine Bent Leg Calf Raise', url: '  https://www.youtube.com/watch?v=nQlW0Nv8rK' },
+    {
+      name: 'Quad Focused Leg Press 2 Press',
+      url: 'https://www.youtube.com/watch?v=O6Fr-819xbU',
+      defaultSets: 3,
+    },
+    {
+      name: 'Overhand Lat Pulldown',
+      url: '  https://www.youtube.com/watch?v=zJWmGede-Zk',
+      defaultSets: 4,
+    },
+    {
+      name: 'Seated Hamstring Curl',
+      url: '  https://www.youtube.com/watch?v=H6R1SNKhsiU',
+      defaultSets: 3,
+    },
+    {
+      name: 'Face away cable curls',
+      url: '  https://www.youtube.com/watch?v=MhJfVKlYjWE',
+      defaultSets: 3,
+    },
+    {
+      name: 'RP Cable Upright Row',
+      url: '  https://www.youtube.com/watch?v=EyJ7bIYCq8g',
+      defaultSets: 3,
+    },
+    {
+      name: 'Machine Bent Leg Calf Raise',
+      url: '  https://www.youtube.com/watch?v=nQlW0Nv8rK',
+      defaultSets: 3,
+    },
   ],
   day2: [
-    { name: 'Smith machine flat bench press', url: 'https://www.youtube.com/watch?v=o9XidjeUGx4' },
-    { name: 'RDL', url: 'https://www.youtube.com/watch?v=EzjyxCfA9F4' },
+    {
+      name: 'Smith machine flat bench press',
+      url: 'https://www.youtube.com/watch?v=o9XidjeUGx4',
+      defaultSets: 4,
+    },
+    { name: 'RDL', url: 'https://www.youtube.com/watch?v=EzjyxCfA9F4', defaultSets: 3 },
     {
       name: 'Upper back focused pin loaded machine row',
       url: 'https://www.youtube.com/watch?v=ow7YE1FXZbY',
+      defaultSets: 4,
     },
-    { name: 'Neutral Grip Lat Pull Down', url: 'https://www.youtube.com/watch?v=5Qv_XRJectI' },
+    {
+      name: 'Neutral Grip Lat Pull Down',
+      url: 'https://www.youtube.com/watch?v=5Qv_XRJectI',
+      defaultSets: 4,
+    },
     {
       name: 'Seated smith machine shoulder press',
       url: 'https://www.youtube.com/watch?v=hOe67uR-iM8',
+      defaultSets: 3,
     },
-    { name: 'Leg Extensions', url: 'https://www.youtube.com/watch?v=Yrvhp8KL6VQ' },
-    { name: 'Katana tricep extensions', url: 'https://www.youtube.com/watch?v=J0NZ2SSfTds' },
+    { name: 'Leg Extensions', url: 'https://www.youtube.com/watch?v=Yrvhp8KL6VQ', defaultSets: 3 },
+    {
+      name: 'Katana tricep extensions',
+      url: 'https://www.youtube.com/watch?v=J0NZ2SSfTds',
+      defaultSets: 3,
+    },
   ],
   day3: [
-    { name: 'Elbow supported bicep curls', url: 'https://www.youtube.com/watch?v=mpwy3sRj7rk' },
-    { name: 'Tricep pushdown', url: 'https://www.youtube.com/watch?v=LBMjUKzQPPM' },
-    { name: 'Lying Hamstring Curl', url: 'https://www.youtube.com/watch?v=Db5TL45wp4k' },
-    { name: 'Flat Dumbell Bench Press', url: 'https://www.youtube.com/watch?v=6Idh48dxgpI' },
-    { name: 'Chest Supported Dumbell Row', url: 'https://www.youtube.com/watch?v=OTRM728_QM4' },
-    { name: 'Behind The Back Lateral Raise', url: 'https://www.youtube.com/watch?v=Nb_usIwWgyA' },
-    { name: 'Knee Raises', url: 'https://www.youtube.com/watch?v=UqmbxvOgnX4' },
+    {
+      name: 'Elbow supported bicep curls',
+      url: 'https://www.youtube.com/watch?v=mpwy3sRj7rk',
+      defaultSets: 4,
+    },
+    { name: 'Tricep pushdown', url: 'https://www.youtube.com/watch?v=LBMjUKzQPPM', defaultSets: 4 },
+    {
+      name: 'Lying Hamstring Curl',
+      url: 'https://www.youtube.com/watch?v=Db5TL45wp4k',
+      defaultSets: 3,
+    },
+    {
+      name: 'Flat Dumbell Bench Press',
+      url: 'https://www.youtube.com/watch?v=6Idh48dxgpI',
+      defaultSets: 4,
+    },
+    {
+      name: 'Chest Supported Dumbell Row',
+      url: 'https://www.youtube.com/watch?v=OTRM728_QM4',
+      defaultSets: 3,
+    },
+    {
+      name: 'Behind The Back Lateral Raise',
+      url: 'https://www.youtube.com/watch?v=Nb_usIwWgyA',
+      defaultSets: 3,
+    },
+    { name: 'Knee Raises', url: 'https://www.youtube.com/watch?v=UqmbxvOgnX4', defaultSets: 3 },
   ],
   day4: [
-    { name: 'Hack Squat ', url: 'https://www.youtube.com/watch?v=QU6fqaX-kFM' },
-    { name: 'Upper back Hi-Lo row Raises', url: 'https://www.youtube.com/watch?v=Tojxn_p0OUI' },
-    { name: 'Y Raises', url: 'https://www.youtube.com/watch?v=m-6H7NTKX8U' },
-    { name: 'STANDING CABLE FLY ', url: 'https://www.youtube.com/watch?v=PRw7ieDBLl4' },
-    { name: 'Cable Hammer Curl 2 ', url: 'https://www.youtube.com/watch?v=QR0KcEWloO8' },
-    { name: 'Barbell Skullcrusher', url: 'https://www.youtube.com/watch?v=l3rHYPtMUo8' },
+    { name: 'Hack Squat ', url: 'https://www.youtube.com/watch?v=QU6fqaX-kFM', defaultSets: 4 },
+    {
+      name: 'Upper back Hi-Lo row Raises',
+      url: 'https://www.youtube.com/watch?v=Tojxn_p0OUI',
+      defaultSets: 4,
+    },
+    { name: 'Y Raises', url: 'https://www.youtube.com/watch?v=m-6H7NTKX8U', defaultSets: 3 },
+    {
+      name: 'STANDING CABLE FLY ',
+      url: 'https://www.youtube.com/watch?v=PRw7ieDBLl4',
+      defaultSets: 3,
+    },
+    {
+      name: 'Cable Hammer Curl 2 ',
+      url: 'https://www.youtube.com/watch?v=QR0KcEWloO8',
+      defaultSets: 3,
+    },
+    {
+      name: 'Barbell Skullcrusher',
+      url: 'https://www.youtube.com/watch?v=l3rHYPtMUo8',
+      defaultSets: 3,
+    },
   ],
 };
 
@@ -107,6 +187,7 @@ const StyledButton = styled(Button)`
 `;
 
 // --- Helper: Always sync log with workoutData ---
+// Initialize each exercise with its default number of sets if not present
 function getSyncedLog(): WorkoutLog {
   const stored = localStorage.getItem('workoutLog');
   let log: WorkoutLog = {};
@@ -123,7 +204,10 @@ function getSyncedLog(): WorkoutLog {
       const existing = log[day]?.find((e: ExerciseLog) => e.name === ex.name);
       return existing
         ? { ...existing, sets: Array.isArray(existing.sets) ? existing.sets : [] }
-        : { name: ex.name, sets: [] };
+        : {
+            name: ex.name,
+            sets: Array.from({ length: ex.defaultSets }, () => ({ reps: '', weight: '' })),
+          };
     });
   });
   return syncedLog;
@@ -137,6 +221,7 @@ function WorkoutLoggerInner() {
     [exercise: string]: { reps: string; weight: string };
   }>({});
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('workoutLog', JSON.stringify(log));
@@ -403,9 +488,20 @@ function WorkoutLoggerInner() {
             </StyledCard>
           );
         })}
-        <StyledButton variant="contained" onClick={() => alert('Workout saved!')}>
+        <StyledButton variant="contained" onClick={() => setModalOpen(true)}>
           Complete Training
         </StyledButton>
+        <Dialog open={modalOpen} onClose={() => setModalOpen(false)}>
+          <DialogTitle>Workout Saved!</DialogTitle>
+          <DialogContent>
+            <Typography>Your workout has been saved successfully.</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setModalOpen(false)} autoFocus>
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Box>
   );

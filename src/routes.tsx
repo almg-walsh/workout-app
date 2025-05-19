@@ -1,14 +1,10 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import ExampleComponent from './components/ExampleComponent';
-
-function Home() {
-  return <h2>Home Page</h2>;
-}
+import WorkoutComponent from './components/WorkoutComponent';
 
 const AppRoutes = () => (
   <Routes>
-    <Route path="/workout-app/workouts" element={<ExampleComponent />} />
+    <Route path="/workout-app" element={<WorkoutComponent />} />
   </Routes>
 );
 
