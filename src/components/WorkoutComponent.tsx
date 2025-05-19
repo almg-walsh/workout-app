@@ -4,10 +4,8 @@ import {
   Tab,
   Box,
   Typography,
-  TextField,
   Card,
   CardContent,
-  Button,
   IconButton,
   CssBaseline,
   Drawer,
@@ -26,6 +24,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 
 // --- Types ---
 type SetEntry = { reps: string; weight: string };
@@ -183,7 +183,51 @@ const VideoWrapper = styled.div`
 const StyledButton = styled(Button)`
   margin-top: 28px;
   width: 100%;
-  font-size: 1.1rem;
+`;
+
+// Styled TextField for mobile-friendly input
+const MobileTextField = styled(TextField)`
+  && {
+    .MuiInputBase-input {
+      font-size: 42px !important;
+    }
+    .MuiInputLabel-root {
+      font-size: 32px !important;
+      color: rgba(180, 180, 180, 0.7) !important; /* lighter and more transparent */
+    }
+    margin-bottom: 16px; /* Add space below each input */
+  }
+`;
+
+// Styled Button for mobile-friendly size
+const MobileButton = styled(Button)`
+  && {
+    min-width: 80px;
+
+    padding-top: 4px;
+    padding-bottom: 4px;
+    width: auto;
+
+    @media (max-width: 600px) {
+      min-width: 120px;
+
+      padding-top: 12px;
+      padding-bottom: 12px;
+      width: 100%;
+      margin-top: 16px;
+    }
+  }
+`;
+
+const RepsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  font-size: 21px;
+
+  @media (min-width: 600px) {
+    flex-direction: column;
+    /* background-color: red; // for debugging, remove if not needed */
+  }
 `;
 
 // --- Helper: Always sync log with workoutData ---
@@ -303,14 +347,9 @@ function WorkoutLoggerInner() {
   return (
     <Box>
       {/* AppBar for mobile hamburger */}
-      <AppBar
-        position="sticky"
-        color="default"
-        elevation={0}
-        sx={{ display: { xs: 'flex', sm: 'none' } }}
-      >
+      <AppBar position="sticky" color="default" elevation={0}>
         <Toolbar variant="dense" sx={{ justifyContent: 'space-between', px: 1 }}>
-          <Typography variant="h6" sx={{ fontSize: 18 }}>
+          <Typography variant="h6" sx={{ fontSize: 24 }} fontSize={24}>
             {dayLabels.find((d) => d.value === tab)?.label}
           </Typography>
           <IconButton
@@ -358,7 +397,12 @@ function WorkoutLoggerInner() {
         sx={{
           mb: 2,
           display: { xs: 'none', sm: 'flex' },
-          '.MuiTab-root': { fontSize: { xs: 13, sm: 16 }, minWidth: 80 },
+          '& .MuiTab-root': {
+            fontSize: '45px', // Match the h6 font size
+            fontWeight: 600,
+            textTransform: 'none',
+            minHeight: '56px',
+          },
         }}
       >
         {dayLabels.map((d) => (
@@ -374,7 +418,7 @@ function WorkoutLoggerInner() {
           return (
             <StyledCard key={name} elevation={2}>
               <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
-                <Typography variant="h6" gutterBottom sx={{ fontSize: { xs: 16, sm: 20 } }}>
+                <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, fontSize: '45px' }}>
                   {name}
                 </Typography>
                 <VideoWrapper>
@@ -387,52 +431,36 @@ function WorkoutLoggerInner() {
                 </VideoWrapper>
 
                 {/* List all sets for this exercise */}
-                <Box>
-                  {sets.map((set, index) => (
-                    <Box
-                      key={index}
-                      display="flex"
-                      flexDirection={{ xs: 'column', sm: 'row' }}
-                      gap={1}
-                      mt={1}
-                      alignItems="center"
+
+                {sets.map((set, index) => (
+                  <RepsContainer key={index}>
+                    <MobileTextField
+                      type="number"
+                      label={`Reps #${index + 1}`}
+                      value={set.reps}
+                      onChange={(e) => updateSet(tab, name, index, 'reps', e.target.value)}
+                      inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                      sx={{ fontSize: '32px' }}
+                    />
+                    <MobileTextField
+                      type="number"
+                      label={`Weight #${index + 1}`}
+                      value={set.weight}
+                      onChange={(e) => updateSet(tab, name, index, 'weight', e.target.value)}
+                      inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                    />
+                    <IconButton
+                      onClick={() => removeSet(tab, name, index)}
+                      size={window.innerWidth < 600 ? 'medium' : 'small'}
                       sx={{
-                        flexWrap: 'wrap',
-                        mb: 1,
-                        background: (theme) => theme.palette.action.hover,
-                        borderRadius: 2,
-                        p: 1,
+                        ml: 1,
                       }}
+                      aria-label="Delete set"
                     >
-                      <TextField
-                        type="number"
-                        label={`Reps #${index + 1}`}
-                        value={set.reps}
-                        onChange={(e) => updateSet(tab, name, index, 'reps', e.target.value)}
-                        size="small"
-                        sx={{ flex: 1, minWidth: 90 }}
-                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                      />
-                      <TextField
-                        type="number"
-                        label={`Weight #${index + 1}`}
-                        value={set.weight}
-                        onChange={(e) => updateSet(tab, name, index, 'weight', e.target.value)}
-                        size="small"
-                        sx={{ flex: 1, minWidth: 90 }}
-                        inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                      />
-                      <IconButton
-                        onClick={() => removeSet(tab, name, index)}
-                        size="small"
-                        sx={{ ml: 1 }}
-                        aria-label="Delete set"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  ))}
-                </Box>
+                      <DeleteIcon />
+                    </IconButton>
+                  </RepsContainer>
+                ))}
 
                 {/* Add set input fields or Add Set button */}
                 {isAdding ? (
@@ -443,46 +471,35 @@ function WorkoutLoggerInner() {
                     mt={1}
                     alignItems="center"
                   >
-                    <TextField
+                    <MobileTextField
                       type="number"
                       label="Reps"
                       value={addingSet[name]?.reps || ''}
                       onChange={(e) => handleSetInputChange(name, 'reps', e.target.value)}
                       fullWidth
-                      size="small"
-                      sx={{ flex: 1, minWidth: 90 }}
-                      inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                       autoFocus
+                      inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                     />
-                    <TextField
+                    <MobileTextField
                       type="number"
                       label="Weight"
                       value={addingSet[name]?.weight || ''}
                       onChange={(e) => handleSetInputChange(name, 'weight', e.target.value)}
                       fullWidth
-                      size="small"
-                      sx={{ flex: 1, minWidth: 90 }}
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                     />
-                    <Button
+                    <MobileButton
                       onClick={() => handleSaveSet(tab, name)}
                       variant="contained"
-                      size="small"
-                      sx={{ minWidth: 80, mt: { xs: 1, sm: 0 } }}
                       disabled={!addingSet[name]?.reps || !addingSet[name]?.weight}
                     >
                       Save
-                    </Button>
+                    </MobileButton>
                   </Box>
                 ) : (
-                  <Button
-                    onClick={() => handleAddSetClick(name)}
-                    variant="outlined"
-                    size="small"
-                    sx={{ mt: 2, width: { xs: '100%', sm: 'auto' } }}
-                  >
+                  <MobileButton onClick={() => handleAddSetClick(name)} variant="outlined">
                     Add Set
-                  </Button>
+                  </MobileButton>
                 )}
               </CardContent>
             </StyledCard>
