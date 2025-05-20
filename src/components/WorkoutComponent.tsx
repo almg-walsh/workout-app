@@ -17,7 +17,7 @@ import {
   Toolbar,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import styled from 'styled-components';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Dialog from '@mui/material/Dialog';
@@ -26,6 +26,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 // --- Types ---
 type SetEntry = { reps: string; weight: string };
@@ -242,10 +243,10 @@ const StyledButton = styled(Button)`
 const MobileTextField = styled(TextField)`
   && {
     .MuiInputBase-input {
-      font-size: 42px !important;
+      font-size: 24px !important;
     }
     .MuiInputLabel-root {
-      font-size: 32px !important;
+      font-size: 24px !important;
       color: rgba(180, 180, 180, 0.7) !important; /* lighter and more transparent */
     }
     margin-bottom: 16px; /* Add space below each input */
@@ -399,6 +400,9 @@ function useWakeLock() {
 function WorkoutLoggerInner() {
   useWakeLock(); // <-- Add this line at the top
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   const [tab, setTab] = useState('day1');
   const [log, setLog] = useState<WorkoutLog>(getSyncedLog);
   const [addingSet, setAddingSet] = useState<{
@@ -487,51 +491,71 @@ function WorkoutLoggerInner() {
   return (
     <Box>
       {/* Drawer for mobile day selection */}
-      <Drawer
-        anchor="left"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        sx={{ display: { xs: 'block', sm: 'none' } }}
-      >
-        <Box sx={{ width: 220 }}>
-          <List>
-            {dayLabels.map((d) => (
-              <ListItem key={d.value} disablePadding>
-                <ListItemButton
-                  selected={tab === d.value}
-                  onClick={() => {
-                    setTab(d.value);
-                    setDrawerOpen(false);
-                  }}
-                >
-                  <ListItemText primary={d.label} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-      </Drawer>
-      {/* Tabs for desktop */}
-      <Tabs
-        value={tab}
-        onChange={(_, newVal) => setTab(newVal)}
-        variant="scrollable"
-        scrollButtons="auto"
-        sx={{
-          mb: 2,
-          display: { xs: 'none', sm: 'flex' },
-          '& .MuiTab-root': {
-            fontSize: '45px', // Match the h6 font size
-            fontWeight: 600,
-            textTransform: 'none',
-            minHeight: '56px',
-          },
-        }}
-      >
-        {dayLabels.map((d) => (
-          <Tab key={d.value} label={d.label} value={d.value} />
-        ))}
-      </Tabs>
+      {isMobile && (
+        <>
+          <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+            <Box sx={{ width: 220 }}>
+              <List>
+                {dayLabels.map((d) => (
+                  <ListItem key={d.value} disablePadding>
+                    <ListItemButton
+                      selected={tab === d.value}
+                      onClick={() => {
+                        setTab(d.value);
+                        setDrawerOpen(false);
+                      }}
+                    >
+                      <ListItemText
+                        primary={
+                          <Typography sx={{ fontSize: 28, fontWeight: 600 }}>{d.label}</Typography>
+                        }
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          </Drawer>
+          {/* Hamburger icon for mobile */}
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <IconButton
+              onClick={() => setDrawerOpen(true)}
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon sx={{ fontSize: 40 }} />
+            </IconButton>
+            <Typography sx={{ fontSize: 28, fontWeight: 600 }}>
+              {dayLabels.find((d) => d.value === tab)?.label}
+            </Typography>
+          </Box>
+        </>
+      )}
+
+      {/* Tabs for desktop only */}
+      {!isMobile && (
+        <Tabs
+          value={tab}
+          onChange={(_, newVal) => setTab(newVal)}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{
+            mb: 2,
+            '& .MuiTab-root': {
+              fontSize: '38px',
+              fontWeight: 600,
+              textTransform: 'none',
+              minHeight: '56px',
+            },
+          }}
+        >
+          {dayLabels.map((d) => (
+            <Tab key={d.value} label={d.label} value={d.value} />
+          ))}
+        </Tabs>
+      )}
 
       <Box sx={{ p: { xs: 1, sm: 0 } }}>
         {workoutData[tab].map(({ name, url }) => {
@@ -541,12 +565,23 @@ function WorkoutLoggerInner() {
           return (
             <StyledCard key={name} elevation={2}>
               <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
-                <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, fontSize: '45px' }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: { xs: '32px', sm: '24px' },
+                  }}
+                >
                   {name}
                 </Typography>
                 <Typography
                   variant="subtitle1"
-                  sx={{ fontSize: '24px', color: 'rgba(180,180,180,0.7)', mb: 1 }}
+                  sx={{
+                    fontSize: { xs: '18px', sm: '24px' },
+                    color: 'rgba(180,180,180,0.7)',
+                    mb: 1,
+                  }}
                 >
                   Target Reps: {workoutData[tab].find((ex) => ex.name === name)?.baseReps}
                 </Typography>
@@ -570,7 +605,7 @@ function WorkoutLoggerInner() {
                       value={set.reps}
                       onChange={(e) => updateSet(tab, name, index, 'reps', e.target.value)}
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                      sx={{ fontSize: '32px' }}
+                      sx={{ fontSize: { xs: '28px', sm: '32px' } }}
                     />
                     <MobileTextField
                       type="number"
@@ -578,10 +613,11 @@ function WorkoutLoggerInner() {
                       value={set.weight}
                       onChange={(e) => updateSet(tab, name, index, 'weight', e.target.value)}
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                      sx={{ fontSize: { xs: '28px', sm: '32px' } }}
                     />
                     <IconButton
                       onClick={() => removeSet(tab, name, index)}
-                      size={window.innerWidth < 600 ? 'medium' : 'small'}
+                      size={isMobile ? 'medium' : 'small'}
                       sx={{
                         ml: 1,
                       }}
@@ -609,6 +645,7 @@ function WorkoutLoggerInner() {
                       fullWidth
                       autoFocus
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                      sx={{ fontSize: { xs: '28px', sm: '32px' } }}
                     />
                     <MobileTextField
                       type="number"
@@ -617,6 +654,7 @@ function WorkoutLoggerInner() {
                       onChange={(e) => handleSetInputChange(name, 'weight', e.target.value)}
                       fullWidth
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
+                      sx={{ fontSize: { xs: '28px', sm: '32px' } }}
                     />
                     <MobileButton
                       onClick={() => handleSaveSet(tab, name)}

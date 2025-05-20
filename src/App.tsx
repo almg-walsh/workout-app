@@ -44,7 +44,7 @@ function App() {
           to="/workout-app"
           variant="text"
           color="primary"
-          sx={{ mr: 2, fontSize: '45px' }}
+          sx={{ mr: 2, fontSize: '24px' }}
         >
           Home
         </Button>
@@ -53,7 +53,7 @@ function App() {
           to="/workout-app/calculator"
           variant="text"
           color="primary"
-          sx={{ mr: 2, fontSize: '45px' }}
+          sx={{ mr: 2, fontSize: '24px' }}
         >
           Calculator
         </Button>
