@@ -19,12 +19,12 @@ export default defineConfig({
         theme_color: '#181a1b',
         icons: [
           {
-            src: '/icon-192.png',
+            src: '/workout-app/icon-192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/icon-512.png',
+            src: '/workout-app/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
           },
