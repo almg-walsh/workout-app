@@ -39,6 +39,9 @@ function App() {
         <Button component={Link} to="/workout-app" variant="text" color="primary" sx={{ mr: 2 }}>
           Home
         </Button>
+         <Button component={Link} to="/workout-app/calculator" variant="text" color="primary" sx={{ mr: 2 }}>
+          Calculator
+        </Button>
       </Box>
       {/* Main content area */}
       <Box
