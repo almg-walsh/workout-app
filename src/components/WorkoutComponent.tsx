@@ -486,23 +486,6 @@ function WorkoutLoggerInner() {
   // Responsive: show hamburger on mobile, tabs on desktop
   return (
     <Box>
-      {/* AppBar for mobile hamburger */}
-      <AppBar position="sticky" color="default" elevation={0}>
-        <Toolbar variant="dense" sx={{ justifyContent: 'space-between', px: 1 }}>
-          <Typography variant="h6" sx={{ fontSize: 24 }} fontSize={24}>
-            {dayLabels.find((d) => d.value === tab)?.label}
-          </Typography>
-          <IconButton
-            edge="end"
-            color="inherit"
-            aria-label="menu"
-            onClick={() => setDrawerOpen(true)}
-            size="large"
-          >
-            <MenuIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
       {/* Drawer for mobile day selection */}
       <Drawer
         anchor="left"

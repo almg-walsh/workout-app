@@ -12,6 +12,7 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
+import styled from 'styled-components';
 
 const activityLevels = [
   { label: 'Sedentary (little to no exercise)', value: 1.2 },
@@ -27,8 +28,47 @@ type FormState = {
   height: number;
   gender: 'male' | 'female';
   activity: number;
-  goal: 'lose' | 'maintain' | 'gain';
+  goal: 'aggressive' | 'lose' | 'maintain' | 'gain';
 };
+
+// Styled TextField for large mobile font and input box
+const BigTextField = styled(TextField)`
+  && {
+    .MuiInputBase-input,
+    .MuiSelect-select {
+      font-size: 45px !important;
+      padding-top: 28px;
+      padding-bottom: 28px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+    }
+    .MuiInputLabel-root {
+      font-size: 32px !important;
+      color: rgba(180, 180, 180, 0.7) !important;
+    }
+    .MuiSelect-icon {
+      font-size: 45px !important;
+    }
+    margin-bottom: 32px;
+  }
+`;
+
+// Styled Table for large font and spacing
+const BigTableCell = styled(TableCell)`
+  && {
+    font-size: 36px;
+    padding: 24px 16px;
+  }
+`;
+
+const BigTableHeadCell = styled(TableCell)`
+  && {
+    font-size: 40px;
+    font-weight: bold;
+    padding: 28px 16px;
+  }
+`;
 
 export default function TDEECalculator() {
   const [form, setForm] = useState<FormState>({
@@ -57,20 +97,23 @@ export default function TDEECalculator() {
   };
 
   const tdee = calculateTDEE();
-  const goalFactor = form.goal === 'lose' ? 0.8 : form.goal === 'gain' ? 1.2 : 1;
-  const calories = tdee * goalFactor;
+  let goalFactor = 1;
+  if (form.goal === 'aggressive') goalFactor = 0.65;
+  else if (form.goal === 'lose') goalFactor = 0.8;
+  else if (form.goal === 'gain') goalFactor = 1.2;
 
+  const calories = tdee * goalFactor;
   const protein = form.weight * 2; // grams
   const fat = form.weight * 1; // grams
   const carbs = (calories - (protein * 4 + fat * 9)) / 4; // grams
 
   return (
-    <Box sx={{ maxWidth: 600, margin: 'auto', p: 2 }}>
-      <Typography variant="h4" gutterBottom>
+    <Box sx={{ maxWidth: '100%', margin: 'auto', p: 2 }}>
+      <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: 38, sm: 44 } }}>
         TDEE & Macro Calculator
       </Typography>
 
-      <TextField
+      <BigTextField
         label="Age"
         type="number"
         fullWidth
@@ -80,7 +123,7 @@ export default function TDEECalculator() {
           handleChange('age', isNaN(Number(e.target.value)) ? 0 : Number(e.target.value))
         }
       />
-      <TextField
+      <BigTextField
         label="Weight (kg)"
         type="number"
         fullWidth
@@ -90,7 +133,7 @@ export default function TDEECalculator() {
           handleChange('weight', isNaN(Number(e.target.value)) ? 0 : Number(e.target.value))
         }
       />
-      <TextField
+      <BigTextField
         label="Height (cm)"
         type="number"
         fullWidth
@@ -100,19 +143,40 @@ export default function TDEECalculator() {
           handleChange('height', isNaN(Number(e.target.value)) ? 0 : Number(e.target.value))
         }
       />
-      <TextField
+      <BigTextField
         select
         label="Gender"
         fullWidth
         margin="normal"
         value={form.gender}
         onChange={(e) => handleChange('gender', e.target.value as 'male' | 'female')}
+        SelectProps={{ native: false }}
       >
-        <MenuItem value="male">Male</MenuItem>
-        <MenuItem value="female">Female</MenuItem>
-      </TextField>
+        <MenuItem
+          value="male"
+          sx={{
+            fontSize: '45px !important',
+            paddingTop: '28px',
+            paddingBottom: '28px',
+            height: '60px',
+          }}
+        >
+          Male
+        </MenuItem>
+        <MenuItem
+          value="female"
+          sx={{
+            fontSize: '45px !important',
+            paddingTop: '28px',
+            paddingBottom: '28px',
+            height: '60px',
+          }}
+        >
+          Female
+        </MenuItem>
+      </BigTextField>
 
-      <TextField
+      <BigTextField
         select
         label="Activity Level"
         fullWidth
@@ -121,53 +185,105 @@ export default function TDEECalculator() {
         onChange={(e) => handleChange('activity', Number(e.target.value))}
       >
         {activityLevels.map((level) => (
-          <MenuItem key={level.value} value={level.value}>
+          <MenuItem
+            key={level.value}
+            value={level.value}
+            sx={{
+              fontSize: '45px !important',
+              paddingTop: '28px',
+              paddingBottom: '28px',
+              height: '60px',
+            }}
+          >
             {level.label}
           </MenuItem>
         ))}
-      </TextField>
+      </BigTextField>
 
-      <TextField
+      <BigTextField
         select
         label="Goal"
         fullWidth
         margin="normal"
         value={form.goal}
-        onChange={(e) => handleChange('goal', e.target.value as 'lose' | 'maintain' | 'gain')}
+        onChange={(e) =>
+          handleChange('goal', e.target.value as 'aggressive' | 'lose' | 'maintain' | 'gain')
+        }
       >
-        <MenuItem value="lose">Fat Loss</MenuItem>
-        <MenuItem value="maintain">Maintenance</MenuItem>
-        <MenuItem value="gain">Muscle Gain</MenuItem>
-      </TextField>
+        <MenuItem
+          value="aggressive"
+          sx={{
+            fontSize: '45px !important',
+            paddingTop: '28px',
+            paddingBottom: '28px',
+            height: '60px',
+          }}
+        >
+          Aggressive Fat Loss
+        </MenuItem>
+        <MenuItem
+          value="lose"
+          sx={{
+            fontSize: '45px !important',
+            paddingTop: '28px',
+            paddingBottom: '28px',
+            height: '60px',
+          }}
+        >
+          Fat Loss
+        </MenuItem>
+        <MenuItem
+          value="maintain"
+          sx={{
+            fontSize: '45px !important',
+            paddingTop: '28px',
+            paddingBottom: '28px',
+            height: '60px',
+          }}
+        >
+          Maintenance
+        </MenuItem>
+        <MenuItem
+          value="gain"
+          sx={{
+            fontSize: '45px !important',
+            paddingTop: '28px',
+            paddingBottom: '28px',
+            height: '60px',
+          }}
+        >
+          Muscle Gain
+        </MenuItem>
+      </BigTextField>
 
       <TableContainer component={Paper} sx={{ mt: 4 }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Metric</TableCell>
-              <TableCell align="right">Value</TableCell>
+              <BigTableHeadCell>Metric</BigTableHeadCell>
+              <BigTableHeadCell align="right">Value</BigTableHeadCell>
             </TableRow>
           </TableHead>
           <TableBody>
             <TableRow>
-              <TableCell>TDEE</TableCell>
-              <TableCell align="right">{tdee.toFixed(0)} kcal</TableCell>
+              <BigTableCell>TDEE</BigTableCell>
+              <BigTableCell align="right">{tdee.toFixed(0)} kcal</BigTableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Target Calories</TableCell>
-              <TableCell align="right">{calories.toFixed(0)} kcal</TableCell>
+              <BigTableCell>Target Calories</BigTableCell>
+              <BigTableCell align="right">{calories.toFixed(0)} kcal</BigTableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Protein</TableCell>
-              <TableCell align="right">{protein.toFixed(0)} g</TableCell>
+              <BigTableCell>Protein</BigTableCell>
+              <BigTableCell align="right">{protein.toFixed(0)} g</BigTableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Fat</TableCell>
-              <TableCell align="right">{fat.toFixed(0)} g</TableCell>
+              <BigTableCell>Fat</BigTableCell>
+              <BigTableCell align="right">{fat.toFixed(0)} g</BigTableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Carbs</TableCell>
-              <TableCell align="right">{carbs.toFixed(0)} g</TableCell>
+              <BigTableCell>Carbs</BigTableCell>
+              <BigTableCell align="right">{carbs.toFixed(0)} g</BigTableCell>
             </TableRow>
           </TableBody>
         </Table>

@@ -34,12 +34,27 @@ function App() {
           bgcolor: 'background.paper',
           borderBottom: 1,
           borderColor: 'divider',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-        <Button component={Link} to="/workout-app" variant="text" color="primary" sx={{ mr: 2 }}>
+        <Button
+          component={Link}
+          to="/workout-app"
+          variant="text"
+          color="primary"
+          sx={{ mr: 2, fontSize: '45px' }}
+        >
           Home
         </Button>
-         <Button component={Link} to="/workout-app/calculator" variant="text" color="primary" sx={{ mr: 2 }}>
+        <Button
+          component={Link}
+          to="/workout-app/calculator"
+          variant="text"
+          color="primary"
+          sx={{ mr: 2, fontSize: '45px' }}
+        >
           Calculator
         </Button>
       </Box>
