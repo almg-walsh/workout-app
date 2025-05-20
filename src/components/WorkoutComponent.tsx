@@ -359,8 +359,46 @@ const Timer: React.FC = () => {
   );
 };
 
+// --- Wake Lock Hook ---
+function useWakeLock() {
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  useEffect(() => {
+    let isActive = true;
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator && isActive) {
+          // @ts-ignore
+          wakeLockRef.current = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {
+        // Wake Lock request failed - ignore or show a message if you want
+      }
+    }
+    requestWakeLock();
+
+    // Re-activate on visibility change (e.g. after unlocking phone)
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        requestWakeLock();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      isActive = false;
+      document.removeEventListener('visibilitychange', handleVisibility);
+      if (wakeLockRef.current) {
+        wakeLockRef.current.release();
+      }
+    };
+  }, []);
+}
+
 // --- Main Component ---
 function WorkoutLoggerInner() {
+  useWakeLock(); // <-- Add this line at the top
+
   const [tab, setTab] = useState('day1');
   const [log, setLog] = useState<WorkoutLog>(getSyncedLog);
   const [addingSet, setAddingSet] = useState<{
