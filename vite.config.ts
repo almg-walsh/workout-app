@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: 'Nutrition Workout App',
         short_name: 'WorkoutApp',
-        start_url: '/',
+        start_url: '/workout-app/',
         display: 'standalone',
         background_color: '#181a1b',
         theme_color: '#181a1b',
