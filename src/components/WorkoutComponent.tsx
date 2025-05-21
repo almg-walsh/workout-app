@@ -98,10 +98,15 @@ const Timer: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-      <Typography sx={{ fontSize: 24, fontWeight: 500 }}>
+      <Typography sx={{ fontSize: 18, fontWeight: 500 }}>
         Rest Timer: {formatTime(seconds)}
       </Typography>
-      <Button variant="outlined" onClick={startTimer} disabled={running}>
+      <Button
+        variant="outlined"
+        onClick={startTimer}
+        disabled={running}
+        sx={{ textTransform: 'none' }}
+      >
         Start 2-min Timer
       </Button>
       <audio
@@ -260,7 +265,7 @@ function WorkoutLoggerInner() {
                     >
                       <ListItemText
                         primary={
-                          <Typography sx={{ fontSize: 28, fontWeight: 600 }}>{d.label}</Typography>
+                          <Typography sx={{ fontSize: 18, fontWeight: 600 }}>{d.label}</Typography>
                         }
                       />
                     </ListItemButton>
@@ -276,11 +281,11 @@ function WorkoutLoggerInner() {
               edge="start"
               color="inherit"
               aria-label="menu"
-              sx={{ mr: 2 }}
+
             >
               <MenuIcon sx={{ fontSize: 40 }} />
             </IconButton>
-            <Typography sx={{ fontSize: 28, fontWeight: 600 }}>
+            <Typography sx={{ fontSize: 24, fontWeight: 600 }}>
               {dayLabels.find((d) => d.value === tab)?.label}
             </Typography>
           </Box>
@@ -317,7 +322,7 @@ function WorkoutLoggerInner() {
           const isAdding = !!addingSet[name];
           return (
             <StyledCard key={name} elevation={2}>
-              <CardContent sx={{ p: { xs: 1, sm: 2 } }}>
+              <CardContent sx={{ p: { xs: 1, sm: 2 }, margin: 1 }}>
                 <Typography
                   variant="h6"
                   gutterBottom
