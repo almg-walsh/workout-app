@@ -12,7 +12,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Nutrition Workout App',
+        name: 'Workout App',
         short_name: 'WorkoutApp',
         start_url: '/workout-app/',
         display: 'standalone',

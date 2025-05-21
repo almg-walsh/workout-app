@@ -4,7 +4,6 @@ import {
   Tab,
   Box,
   Typography,
-  Card,
   CardContent,
   IconButton,
   CssBaseline,
@@ -13,276 +12,30 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  AppBar,
-  Toolbar,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
-import styled from 'styled-components';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import {
+  StyledCard,
+  VideoWrapper,
+  RepsContainer,
+  MobileTextField,
+  MobileButton,
+  StyledButton,
+} from './WorkoutComponent.styles';
+import { workoutData } from './WorkoutData';
 
 // --- Types ---
 type SetEntry = { reps: string; weight: string };
 type ExerciseLog = { name: string; sets: SetEntry[] };
 type WorkoutLog = { [day: string]: ExerciseLog[] };
-
-// --- Data ---
-// Add defaultSets and baseReps to each exercise
-const workoutData: {
-  [day: string]: { name: string; url: string; defaultSets: number; baseReps: string }[];
-} = {
-  day1: [
-    {
-      name: 'Smith machine incline bench press',
-      url: 'https://www.youtube.com/watch?v=X4YsGnP4a-A',
-      defaultSets: 4,
-      baseReps: '6-9',
-    },
-    {
-      name: 'Quad Focused Leg Press 2 Press',
-      url: 'https://www.youtube.com/watch?v=O6Fr-819xbU',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-    {
-      name: 'Overhand Lat Pulldown',
-      url: '  https://www.youtube.com/watch?v=zJWmGede-Zk',
-      defaultSets: 4,
-      baseReps: '8-12',
-    },
-    {
-      name: 'Seated Hamstring Curl',
-      url: '  https://www.youtube.com/watch?v=H6R1SNKhsiU',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-    {
-      name: 'Face away cable curls',
-      url: '  https://www.youtube.com/watch?v=MhJfVKlYjWE',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-    {
-      name: 'RP Cable Upright Row',
-      url: '  https://www.youtube.com/watch?v=EyJ7bIYCq8g',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-    {
-      name: 'Machine Bent Leg Calf Raise',
-      url: '  https://www.youtube.com/watch?v=nQlW0Nv8rK',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-  ],
-  day2: [
-    {
-      name: 'Smith machine flat bench press',
-      url: 'https://www.youtube.com/watch?v=o9XidjeUGx4',
-      defaultSets: 4,
-      baseReps: '8-12',
-    },
-    {
-      name: 'RDL',
-      url: 'https://www.youtube.com/watch?v=EzjyxCfA9F4',
-      defaultSets: 3,
-      baseReps: '6-9',
-    },
-    {
-      name: 'Upper back focused pin loaded machine row',
-      url: 'https://www.youtube.com/watch?v=ow7YE1FXZbY',
-      defaultSets: 4,
-      baseReps: '6-9',
-    },
-    {
-      name: 'Neutral Grip Lat Pull Down',
-      url: 'https://www.youtube.com/watch?v=5Qv_XRJectI',
-      defaultSets: 4,
-      baseReps: '6-9',
-    },
-    {
-      name: 'Seated smith machine shoulder press',
-      url: 'https://www.youtube.com/watch?v=hOe67uR-iM8',
-      defaultSets: 3,
-      baseReps: '6-9',
-    },
-    {
-      name: 'Leg Extensions',
-      url: 'https://www.youtube.com/watch?v=Yrvhp8KL6VQ',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-    {
-      name: 'Katana tricep extensions',
-      url: 'https://www.youtube.com/watch?v=J0NZ2SSfTds',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-  ],
-  day3: [
-    {
-      name: 'Elbow supported bicep curls',
-      url: 'https://www.youtube.com/watch?v=mpwy3sRj7rk',
-      defaultSets: 4,
-      baseReps: '6-9',
-    },
-    {
-      name: 'Tricep pushdown',
-      url: 'https://www.youtube.com/watch?v=LBMjUKzQPPM',
-      defaultSets: 4,
-      baseReps: '6-9',
-    },
-    {
-      name: 'Lying Hamstring Curl',
-      url: 'https://www.youtube.com/watch?v=Db5TL45wp4k',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-    {
-      name: 'Flat Dumbell Bench Press',
-      url: 'https://www.youtube.com/watch?v=6Idh48dxgpI',
-      defaultSets: 4,
-      baseReps: '8-12',
-    },
-    {
-      name: 'Chest Supported Dumbell Row',
-      url: 'https://www.youtube.com/watch?v=OTRM728_QM4',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-    {
-      name: 'Behind The Back Lateral Raise',
-      url: 'https://www.youtube.com/watch?v=Nb_usIwWgyA',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-    {
-      name: 'Knee Raises',
-      url: 'https://www.youtube.com/watch?v=UqmbxvOgnX4',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-  ],
-  day4: [
-    {
-      name: 'Hack Squat ',
-      url: 'https://www.youtube.com/watch?v=QU6fqaX-kFM',
-      defaultSets: 4,
-      baseReps: '6-9',
-    },
-    {
-      name: 'Upper back Hi-Lo row Raises',
-      url: 'https://www.youtube.com/watch?v=Tojxn_p0OUI',
-      defaultSets: 4,
-      baseReps: '6-9',
-    },
-    {
-      name: 'Y Raises',
-      url: 'https://www.youtube.com/watch?v=m-6H7NTKX8U',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-    {
-      name: 'STANDING CABLE FLY ',
-      url: 'https://www.youtube.com/watch?v=PRw7ieDBLl4',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-    {
-      name: 'Cable Hammer Curl 2 ',
-      url: 'https://www.youtube.com/watch?v=QR0KcEWloO8',
-      defaultSets: 3,
-      baseReps: '6-9',
-    },
-    {
-      name: 'Barbell Skullcrusher',
-      url: 'https://www.youtube.com/watch?v=l3rHYPtMUo8',
-      defaultSets: 3,
-      baseReps: '8-12',
-    },
-  ],
-};
-
-// --- Styled Components ---
-const StyledCard = styled(Card)`
-  margin-bottom: 20px;
-  width: 100%;
-  border-radius: 16px;
-`;
-
-const VideoWrapper = styled.div`
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
-  overflow: hidden;
-  margin-bottom: 12px;
-  border-radius: 12px;
-  iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-  }
-`;
-
-const StyledButton = styled(Button)`
-  margin-top: 28px;
-  width: 100%;
-`;
-
-// Styled TextField for mobile-friendly input
-const MobileTextField = styled(TextField)`
-  && {
-    .MuiInputBase-input {
-      font-size: 24px !important;
-    }
-    .MuiInputLabel-root {
-      font-size: 24px !important;
-      color: rgba(180, 180, 180, 0.7) !important; /* lighter and more transparent */
-    }
-    margin-bottom: 16px; /* Add space below each input */
-  }
-`;
-
-// Styled Button for mobile-friendly size
-const MobileButton = styled(Button)`
-  && {
-    min-width: 80px;
-
-    padding-top: 4px;
-    padding-bottom: 4px;
-    width: auto;
-
-    @media (max-width: 600px) {
-      min-width: 120px;
-
-      padding-top: 12px;
-      padding-bottom: 12px;
-      width: 100%;
-      margin-top: 16px;
-    }
-  }
-`;
-
-const RepsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  font-size: 21px;
-
-  @media (min-width: 600px) {
-    flex-direction: column;
-    /* background-color: red; // for debugging, remove if not needed */
-  }
-`;
 
 // --- Helper: Always sync log with workoutData ---
 // Initialize each exercise with its default number of sets if not present
@@ -489,10 +242,10 @@ function WorkoutLoggerInner() {
 
   // Responsive: show hamburger on mobile, tabs on desktop
   return (
-    <Box>
+    <Box sx={{ padding: 1 }}>
       {/* Drawer for mobile day selection */}
       {isMobile && (
-        <>
+        <Box sx={{ paddingLeft: 1 }}>
           <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
             <Box sx={{ width: 220 }}>
               <List>
@@ -531,7 +284,7 @@ function WorkoutLoggerInner() {
               {dayLabels.find((d) => d.value === tab)?.label}
             </Typography>
           </Box>
-        </>
+        </Box>
       )}
 
       {/* Tabs for desktop only */}
@@ -544,7 +297,7 @@ function WorkoutLoggerInner() {
           sx={{
             mb: 2,
             '& .MuiTab-root': {
-              fontSize: '38px',
+              fontSize: '18px',
               fontWeight: 600,
               textTransform: 'none',
               minHeight: '56px',
@@ -557,7 +310,7 @@ function WorkoutLoggerInner() {
         </Tabs>
       )}
 
-      <Box sx={{ p: { xs: 1, sm: 0 } }}>
+      <Box sx={{ p: { xs: 1, sm: 0 }, paddingLeft: 3 }}>
         {workoutData[tab].map(({ name, url }) => {
           const exerciseLog = log[tab].find((ex) => ex.name === name);
           const sets = exerciseLog ? exerciseLog.sets : [];
@@ -570,7 +323,7 @@ function WorkoutLoggerInner() {
                   gutterBottom
                   sx={{
                     fontWeight: 600,
-                    fontSize: { xs: '32px', sm: '24px' },
+                    fontSize: { xs: '18px', sm: '18px' },
                   }}
                 >
                   {name}
@@ -578,7 +331,7 @@ function WorkoutLoggerInner() {
                 <Typography
                   variant="subtitle1"
                   sx={{
-                    fontSize: { xs: '18px', sm: '24px' },
+                    fontSize: { xs: '18px', sm: '18px' },
                     color: 'rgba(180,180,180,0.7)',
                     mb: 1,
                   }}
@@ -605,7 +358,7 @@ function WorkoutLoggerInner() {
                       value={set.reps}
                       onChange={(e) => updateSet(tab, name, index, 'reps', e.target.value)}
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                      sx={{ fontSize: { xs: '28px', sm: '32px' } }}
+                      sx={{ fontSize: { xs: '18px', sm: '18px' } }}
                     />
                     <MobileTextField
                       type="number"
@@ -613,7 +366,7 @@ function WorkoutLoggerInner() {
                       value={set.weight}
                       onChange={(e) => updateSet(tab, name, index, 'weight', e.target.value)}
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                      sx={{ fontSize: { xs: '28px', sm: '32px' } }}
+                      sx={{ fontSize: { xs: '18px', sm: '18px' } }}
                     />
                     <IconButton
                       onClick={() => removeSet(tab, name, index)}
@@ -645,7 +398,7 @@ function WorkoutLoggerInner() {
                       fullWidth
                       autoFocus
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                      sx={{ fontSize: { xs: '28px', sm: '32px' } }}
+                      sx={{ fontSize: { xs: '18px', sm: '18px' } }}
                     />
                     <MobileTextField
                       type="number"
@@ -654,7 +407,7 @@ function WorkoutLoggerInner() {
                       onChange={(e) => handleSetInputChange(name, 'weight', e.target.value)}
                       fullWidth
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-                      sx={{ fontSize: { xs: '28px', sm: '32px' } }}
+                      sx={{ fontSize: { xs: '18px', sm: '18px' } }}
                     />
                     <MobileButton
                       onClick={() => handleSaveSet(tab, name)}

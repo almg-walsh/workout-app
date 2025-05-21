@@ -23,9 +23,9 @@ const activityLevels = [
 ];
 
 type FormState = {
-  age: number;
-  weight: number;
-  height: number;
+  age: number | null;
+  weight: number | null;
+  height: number | null;
   gender: 'male' | 'female';
   activity: number;
   goal: 'aggressive' | 'lose' | 'maintain' | 'gain';
@@ -36,10 +36,10 @@ const BigTextField = styled(TextField)`
   && {
     .MuiInputBase-input,
     .MuiSelect-select {
-      font-size: 45px !important;
-      padding-top: 28px;
-      padding-bottom: 28px;
-      height: 60px;
+      font-size: 18px !important;
+      padding-top: 18px;
+      padding-bottom: 18px;
+      height: 40px;
       display: flex;
       align-items: center;
     }
@@ -48,7 +48,7 @@ const BigTextField = styled(TextField)`
       color: rgba(180, 180, 180, 0.7) !important;
     }
     .MuiSelect-icon {
-      font-size: 45px !important;
+      font-size: 18px !important;
     }
     margin-bottom: 32px;
   }
@@ -57,14 +57,14 @@ const BigTextField = styled(TextField)`
 // Styled Table for large font and spacing
 const BigTableCell = styled(TableCell)`
   && {
-    font-size: 36px;
+    font-size: 18px;
     padding: 24px 16px;
   }
 `;
 
 const BigTableHeadCell = styled(TableCell)`
   && {
-    font-size: 40px;
+    font-size: 18px;
     font-weight: bold;
     padding: 28px 16px;
   }
@@ -72,9 +72,9 @@ const BigTableHeadCell = styled(TableCell)`
 
 export default function TDEECalculator() {
   const [form, setForm] = useState<FormState>({
-    age: 40,
-    weight: 100,
-    height: 178,
+    age: 35,
+    weight: 78,
+    height: 180,
     gender: 'male',
     activity: 1.55,
     goal: 'lose',
@@ -89,10 +89,13 @@ export default function TDEECalculator() {
 
   const calculateTDEE = () => {
     const { age, weight, height, gender, activity } = form;
+    const safeWeight = weight ?? 0;
+    const safeHeight = height ?? 0;
+    const safeAge = age ?? 0;
     const BMR =
       gender === 'male'
-        ? 10 * weight + 6.25 * height - 5 * age + 5
-        : 10 * weight + 6.25 * height - 5 * age - 161;
+        ? 10 * safeWeight + 6.25 * safeHeight - 5 * safeAge + 5
+        : 10 * safeWeight + 6.25 * safeHeight - 5 * safeAge - 161;
     return BMR * activity;
   };
 
@@ -103,13 +106,13 @@ export default function TDEECalculator() {
   else if (form.goal === 'gain') goalFactor = 1.2;
 
   const calories = tdee * goalFactor;
-  const protein = form.weight * 2; // grams
-  const fat = form.weight * 1; // grams
+  const protein = form?.weight * 2; // grams
+  const fat = form?.weight * 1; // grams
   const carbs = (calories - (protein * 4 + fat * 9)) / 4; // grams
 
   return (
     <Box sx={{ maxWidth: '100%', margin: 'auto', p: 2 }}>
-      <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: 38, sm: 44 } }}>
+      <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: 24, sm: 24 } }}>
         TDEE & Macro Calculator
       </Typography>
 
@@ -155,10 +158,10 @@ export default function TDEECalculator() {
         <MenuItem
           value="male"
           sx={{
-            fontSize: '45px !important',
+            fontSize: '18px !important',
             paddingTop: '28px',
             paddingBottom: '28px',
-            height: '60px',
+            height: '40px',
           }}
         >
           Male
@@ -166,10 +169,10 @@ export default function TDEECalculator() {
         <MenuItem
           value="female"
           sx={{
-            fontSize: '45px !important',
+            fontSize: '18px !important',
             paddingTop: '28px',
             paddingBottom: '28px',
-            height: '60px',
+            height: '40px',
           }}
         >
           Female
@@ -189,10 +192,10 @@ export default function TDEECalculator() {
             key={level.value}
             value={level.value}
             sx={{
-              fontSize: '45px !important',
+              fontSize: '18px !important',
               paddingTop: '28px',
               paddingBottom: '28px',
-              height: '60px',
+              height: '40px',
             }}
           >
             {level.label}
@@ -213,10 +216,10 @@ export default function TDEECalculator() {
         <MenuItem
           value="aggressive"
           sx={{
-            fontSize: '45px !important',
+            fontSize: '18px !important',
             paddingTop: '28px',
             paddingBottom: '28px',
-            height: '60px',
+            height: '40px',
           }}
         >
           Aggressive Fat Loss
@@ -224,10 +227,10 @@ export default function TDEECalculator() {
         <MenuItem
           value="lose"
           sx={{
-            fontSize: '45px !important',
+            fontSize: '18px !important',
             paddingTop: '28px',
             paddingBottom: '28px',
-            height: '60px',
+            height: '40px',
           }}
         >
           Fat Loss
@@ -235,10 +238,10 @@ export default function TDEECalculator() {
         <MenuItem
           value="maintain"
           sx={{
-            fontSize: '45px !important',
+            fontSize: '18px !important',
             paddingTop: '28px',
             paddingBottom: '28px',
-            height: '60px',
+            height: '40px',
           }}
         >
           Maintenance
@@ -246,10 +249,10 @@ export default function TDEECalculator() {
         <MenuItem
           value="gain"
           sx={{
-            fontSize: '45px !important',
+            fontSize: '18px !important',
             paddingTop: '28px',
             paddingBottom: '28px',
-            height: '60px',
+            height: '40px',
           }}
         >
           Muscle Gain

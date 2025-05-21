@@ -43,8 +43,8 @@ function App() {
           component={Link}
           to="/workout-app"
           variant="text"
-          color="primary"
-          sx={{ mr: 2, fontSize: '24px' }}
+          color="inherit"
+          sx={{ mr: 2, fontSize: '24px', textTransform: 'none' }} // <-- add this
         >
           Home
         </Button>
@@ -52,8 +52,8 @@ function App() {
           component={Link}
           to="/workout-app/calculator"
           variant="text"
-          color="primary"
-          sx={{ mr: 2, fontSize: '24px' }}
+          color="inherit"
+          sx={{ mr: 2, fontSize: '24px', textTransform: 'none' }} // <-- add this
         >
           Calculator
         </Button>
