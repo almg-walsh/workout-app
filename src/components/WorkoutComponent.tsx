@@ -31,6 +31,7 @@ import {
   StyledButton,
 } from './WorkoutComponent.styles';
 import { workoutData } from './WorkoutData';
+import { format } from 'date-fns';
 
 // --- Types ---
 type SetEntry = { reps: string; weight: string };
@@ -169,6 +170,21 @@ function WorkoutLoggerInner() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
+  // --- NEW: Track workout dates per day ---
+  const [workoutDates, setWorkoutDates] = useState<{ [day: string]: string }>({});
+
+  // Helper to update workout date for a day
+  function updateWorkoutDate(day: string) {
+    const today = new Date(); // YYYY-MM-DD
+
+    const formattedDate = format(today, 'dd LLLL yyyy HH:mm');
+    setWorkoutDates((prev) => {
+      const updated = { ...prev, [day]: formattedDate };
+      localStorage.setItem('workoutDates', JSON.stringify(updated));
+      return updated;
+    });
+  }
+
   useEffect(() => {
     localStorage.setItem('workoutLog', JSON.stringify(log));
   }, [log]);
@@ -179,6 +195,7 @@ function WorkoutLoggerInner() {
       ...prev,
       [exercise]: { reps: '', weight: '' },
     }));
+    updateWorkoutDate(tab); // Update date on add set
   };
 
   // Update input values for the set being added
@@ -204,6 +221,7 @@ function WorkoutLoggerInner() {
       delete newState[exercise];
       return newState;
     });
+    updateWorkoutDate(day); // Update date on save set
   };
 
   // Update an existing set's reps or weight
@@ -225,6 +243,7 @@ function WorkoutLoggerInner() {
           : ex,
       ),
     }));
+    updateWorkoutDate(day); // Update date on set edit
   };
 
   // Remove a set from an exercise
@@ -235,6 +254,7 @@ function WorkoutLoggerInner() {
         ex.name === name ? { ...ex, sets: ex.sets.filter((_, i) => i !== index) } : ex,
       ),
     }));
+    updateWorkoutDate(day); // Update date on set removal
   };
 
   // Day labels for menu
@@ -281,7 +301,6 @@ function WorkoutLoggerInner() {
               edge="start"
               color="inherit"
               aria-label="menu"
-
             >
               <MenuIcon sx={{ fontSize: 40 }} />
             </IconButton>
@@ -314,6 +333,12 @@ function WorkoutLoggerInner() {
           ))}
         </Tabs>
       )}
+
+      {/* --- Show last workout date at the top --- */}
+      <Typography sx={{ fontSize: 18, fontWeight: 500, mb: 2 }}>
+        Last workout for {dayLabels.find((d) => d.value === tab)?.label}:&nbsp;
+        {workoutDates[tab] || 'No workout yet'}
+      </Typography>
 
       <Box sx={{ p: { xs: 1, sm: 0 }, paddingLeft: 3 }}>
         {workoutData[tab].map(({ name, url }) => {
